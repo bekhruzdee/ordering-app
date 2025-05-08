@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./apps/orders/Dockerfile
       target: development
-    command:   npm run start:dev orders
+    command: npm run start:dev orders
     env_file:
       - ./apps/orders/.env
     depends_on:
@@ -14,9 +14,28 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    ports: 
+    ports:
       - '3000:3000'
 
+  billing:
+    build:
+      context: .
+      dockerfile: ./apps/billing/Dockerfile
+      target: development
+    command: npm run start:dev billing
+    env_file:
+      - ./apps/billing/.env
+    depends_on:
+      - mongodb-primary
+      - mongodb-secondary
+      - mongodb-arbiter
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - '5672:5672'
   mongodb-primary:
     image: docker.io/bitnami/mongodb:8.0
     environment:
